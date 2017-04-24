@@ -15,21 +15,27 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 			$output = '';
 			$data = UCF_Weather_Feed::get_weather_data( $args['feed'] );
 			$theme = $args['theme'] ? $args['theme'] : 'default';
+			$layout = $args['layout'] ? $args['layout'] : 'default';
 
 			switch( $args['feed'] ) {
 				case 'today':
 					$output = self::display_today_default( $data, $theme );
-					//$output = apply_filters( 'ucf_weather_today_' . $args['layout'], $data, $output );
+					if ( has_filter( 'ucf_weather_today_' . $layout ) ) {
+						$output = apply_filters( 'ucf_weather_today_' . $args['layout'], $data, $output );
+					}
 					break;
 				case 'extended':
 					$output = self::display_extended_default( $data, $theme );
-					//$output = apply_filters( 'ucf_weather_extended_' . $args['layout'], $data, $output );
+					if ( has_filter( 'ucf_weather_extended_' . $layout ) ) {
+						$output = apply_filters( 'ucf_weather_extended_' . $args['layout'], $data, $output );
+					}
 					break;
 				case 'default':
 				default:
 					$output = self::display_default( $data, $theme );
-					//$output = apply_filters( 'ucf_weather_default_' . $args['layout'], $data, $output );
-					
+					if ( has_filter( 'ucf_weather_default_' . $layout ) ) {
+						$output = apply_filters( 'ucf_weather_default_' . $args['layout'], $data, $output );
+					}
 					break;
 			}
 
