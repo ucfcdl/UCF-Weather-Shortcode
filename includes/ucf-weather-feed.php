@@ -25,7 +25,7 @@ if ( ! class_exists( 'UCF_Weather_Feed' ) ) {
 					$args['data'] = 'forecastToday';
 					break;
 				case 'extended':
-					$args['data'] = 'forecaseExtended';
+					$args['data'] = 'forecastExtended';
 					break;
 				default:
 					break;

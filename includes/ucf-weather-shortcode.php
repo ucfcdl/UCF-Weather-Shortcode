@@ -38,7 +38,8 @@ if ( ! class_exists( 'UCF_Weather_Shortcode' ) ) {
 		public static function callback( $atts, $content='' ) {
 			$atts = shortcode_atts( array(
 				'feed'   => 'default',
-				'layout' => 'default'
+				'layout' => 'default',
+				'theme'  => 'default'
 			), $atts );
 
 			return UCF_Weather_Common::display_weather( $atts );

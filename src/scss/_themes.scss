@@ -1,0 +1,23 @@
+.weather {
+  &.theme-default {
+    color: $primary-color;
+
+    .wi {
+      color: $icon-color;
+    }
+  }
+
+  &.theme-inverse {
+    color: $primary-color-inverse;
+
+    .wi {
+      color: $icon-color-inverse;
+    }
+  }
+}
+
+.forecast-day {
+  display: inline-block;
+  padding: 4px 8px;
+  margin-right: 4px;
+}
