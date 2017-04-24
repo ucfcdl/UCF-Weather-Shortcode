@@ -36,7 +36,12 @@ if ( ! class_exists( 'UCF_Weather_Shortcode' ) ) {
 		 * @return string | The markup to be displayed.
 		 **/
 		public static function callback( $atts, $content='' ) {
+			$atts = shortcode_atts( array(
+				'feed'   => 'default',
+				'layout' => 'default'
+			), $atts );
 
+			return UCF_Weather_Common::display_weather( $atts );
 		}
 	}
 }

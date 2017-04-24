@@ -12,10 +12,10 @@ if ( ! class_exists( 'UCF_Weather_Feed' ) ) {
 		 * @param $feed string | The feed to retrieve
 		 * @return Object | The weather data object.
 		 **/
-		public static function get_weather( $feed='default' ) {
-			$base_url = UCF_Weather_Config::get_option_or_default( 'feed_base_url' );
+		public static function get_weather_data( $feed='default' ) {
+			$base_url = UCF_Weather_Config::get_option_or_default( 'feed_url_base' );
 			$timeout = UCF_Weather_Config::get_option_or_default( 'transient_timeout' );
-			$use_transient = UCF_WeatherConfig::get_option_or_default( 'use_transient' );
+			$use_transient = UCF_Weather_Config::get_option_or_default( 'use_transient' );
 
 			$args = array();
 
@@ -46,17 +46,17 @@ if ( ! class_exists( 'UCF_Weather_Feed' ) ) {
 				$response = wp_remote_get( $url, array( 'timeout' => 15 ) );
 
 				if ( is_array( $response ) ) {
-					$data = json_decode( wp_remote_retrieve_body( $reponse ) );
+					$data = json_decode( wp_remote_retrieve_body( $response ) );
 				} else {
 					$data = false;
 				}
 
 				if ( $items && $use_transient ) {
-					set_transient( $transient_name, $items, $timeout * 60 ); // Timeout is stored as minutes.
+					set_transient( $transient_name, $data, $timeout * 60 ); // Timeout is stored as minutes.
 				}
 			}
 
-			return $items;
+			return $data;
 
 		}
 

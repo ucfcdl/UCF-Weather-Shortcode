@@ -314,6 +314,17 @@ if ( !class_exists( 'UCF_Weather_Config' ) ) {
 			echo ob_get_clean();
 		}
 
+		/**
+		 * Enqueues the front end assets
+		 * @author Jim Barnes
+		 * @since 1.0.0
+		 **/
+		public static function enqueue_frontend_assets() {
+			if ( self::get_option_or_default( 'include_css' ) ) {
+				wp_enqueue_style( 'ucf-weather-css', UCF_WEATHER__STYLES_URL . '/ucf-weather.min.css' );
+			}
+		}
+
 	}
 }
 
