@@ -5,15 +5,22 @@ var gulp         = require('gulp'),
     cleanCss     = require('gulp-clean-css'),
     autoprefixer = require('gulp-autoprefixer'),
     rename       = require('gulp-rename'),
+    eslint       = require('gulp-eslint'),
+    concat       = require('gulp-concat'),
+    ifFixed      = require('gulp-eslint-if-fixed'),
+    sourcemaps   = require('gulp-sourcemaps'),
+    uglify       = require('gulp-uglify'),
     readme       = require('gulp-readme-to-markdown'),
     runSequence  = require('run-sequence');
 
 var config = {
   src: {
-    scssPath: './src/scss'
+    scssPath: './src/scss',
+    jsPath: './src/js'
   },
   dist: {
     cssPath: './static/css',
+    jsPath: './static/js',
     fontPath: './static/fonts'
   },
   pkgs: {
@@ -42,7 +49,7 @@ gulp.task('scss-lint', function() {
     }));
 });
 
-gulp.task('scss', ['scss-lint'], function() {
+gulp.task('scss', function() {
   return gulp.src(config.src.scssPath + '/ucf-weather.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(cleanCss())
@@ -54,7 +61,28 @@ gulp.task('scss', ['scss-lint'], function() {
     .pipe(gulp.dest(config.dist.cssPath));
 });
 
-gulp.task('css', ['scss-lint', 'scss']);
+gulp.task('css', function() {
+  runSequence('scss-lint', 'scss');
+});
+
+gulp.task('eslint', function() {
+  return gulp.src(config.src.jsPath + '/**/*.js')
+    .pipe(eslint({fix: true}))
+    .pipe(eslint.format())
+    .pipe(ifFixed(config.src.jsPath));
+});
+
+gulp.task('js-admin', function() {
+  return gulp.src(config.src.jsPath + '/admin.js')
+    .pipe(sourcemaps.init())
+    .pipe(rename('ucf-weather-admin.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(config.dist.jsPath));
+});
+
+gulp.task('js', function() {
+  runSequence('eslint', 'js-admin');
+});
 
 gulp.task('readme', function() {
   return gulp.src('./readme.txt')
@@ -67,8 +95,9 @@ gulp.task('readme', function() {
 
 gulp.task('watch', function() {
   gulp.watch(config.src.scssPath + '/**/*.scss', ['css']);
+  gulp.watch(config.src.jsPath + '/**/*.js', ['js']);
 });
 
 gulp.task('default', function() {
-  runSequence('components', 'css', 'readme');
+  runSequence('components', 'css', 'js', 'readme');
 });
