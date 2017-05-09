@@ -29,7 +29,7 @@ if ( ! function_exists( 'ucf_weather_activate' ) ) {
 		UCF_Weather_Config::add_options();
 	}
 
-	register_activation_hook( UCF_WEAHTER__PLUGIN_FILE, 'ucf_weather_activate' );
+	register_activation_hook( UCF_WEATHER__PLUGIN_FILE, 'ucf_weather_activate' );
 }
 
 if ( ! function_exists( 'ucf_weather_deactivate' ) ) {
@@ -37,7 +37,7 @@ if ( ! function_exists( 'ucf_weather_deactivate' ) ) {
 		UCF_Weather_Config::delete_options();
 	}
 
-	register_deactivation_hook( UCF_WEAHTER__PLUGIN_FILE, 'ucf_weather_deactivate' );
+	register_deactivation_hook( UCF_WEATHER__PLUGIN_FILE, 'ucf_weather_deactivate' );
 }
 
 if ( ! function_exists( 'ucf_weather_init' ) ) {
