@@ -8,13 +8,13 @@ if ( ! class_exists( 'UCF_Weather_Feed' ) ) {
 		 * Retrieves weather data.
 		 * @author Jim Barnes
 		 * @since 1.0.0
-		 * 
+		 *
 		 * @param $feed string | The feed to retrieve
 		 * @return Object | The weather data object.
 		 **/
 		public static function get_weather_data( $feed='default' ) {
 			$base_url = UCF_Weather_Config::get_option_or_default( 'feed_url_base' );
-			$timeout = UCF_Weather_Config::get_option_or_default( 'transient_timeout' );
+			$timeout = UCF_Weather_Config::get_option_or_default( 'transient_expiration' );
 			$use_transient = UCF_Weather_Config::get_option_or_default( 'use_transient' );
 
 			$args = array();
@@ -51,7 +51,7 @@ if ( ! class_exists( 'UCF_Weather_Feed' ) ) {
 					$data = false;
 				}
 
-				if ( $items && $use_transient ) {
+				if ( $data && $use_transient ) {
 					set_transient( $transient_name, $data, $timeout * 60 ); // Timeout is stored as minutes.
 				}
 			}
