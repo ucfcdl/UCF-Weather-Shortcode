@@ -22,7 +22,8 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 ## Changelog ##
 
-N/A
+### 1.0.0 ###
+* Initial release
 
 ## Upgrade Notice ##
 
@@ -37,6 +38,4 @@ None
 ## Development & Contributing ##
 
 NOTE: this plugin's readme.md file is automatically generated.  Please only make modifications to the readme.txt file, and make sure the `gulp readme` command has been run before committing readme changes.
-
-### Wishlist/TODOs ###
 
