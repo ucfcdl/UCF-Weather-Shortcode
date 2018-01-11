@@ -22,6 +22,10 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 ## Changelog ##
 
+### 1.0.1 ###
+Bug Fixes:
+* Removed `is_plugin_active()` check in `ucf-weather.php` and replaced with `class_exists()` check to prevent errors when `wp-admin/includes/plugin.php` is not loaded.
+
 ### 1.0.0 ###
 * Initial release
 

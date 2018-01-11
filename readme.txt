@@ -3,7 +3,7 @@ Contributors: ucfwebcom
 Tags: ucf, weather, shortcode
 Requires at least: 4.5.3
 Tested up to: 4.7.3
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl-3.0.html
 
@@ -28,6 +28,10 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 
 == Changelog ==
+
+= 1.0.1 =
+Bug Fixes:
+* Removed `is_plugin_active()` check in `ucf-weather.php` and replaced with `class_exists()` check to prevent errors when `wp-admin/includes/plugin.php` is not loaded.
 
 = 1.0.0 =
 * Initial release
