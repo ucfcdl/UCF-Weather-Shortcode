@@ -3,7 +3,7 @@ Contributors: ucfwebcom
 Tags: ucf, weather, shortcode
 Requires at least: 4.5.3
 Tested up to: 4.7.3
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl-3.0.html
 
@@ -28,6 +28,10 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 
 == Changelog ==
+
+= 1.0.2 =
+Enhancements:
+* Updated `UCF_Weather_Common::get_weather_icon()` to be a public method, allowing weather icon classes to be fetched within custom layouts and elsewhere.
 
 = 1.0.1 =
 Bug Fixes:
