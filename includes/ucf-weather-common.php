@@ -144,7 +144,7 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		 * @param $condition string | The weather condition
 		 * @return string | The css icon classes.
 		 **/
-		private static function get_weather_icon( $condition, $night=false ) {
+		public static function get_weather_icon( $condition, $night=false ) {
 			$icon_suffix = null;
 			$icon_prefix = "wi wi-";
 			$icons_to_conditions = array(
