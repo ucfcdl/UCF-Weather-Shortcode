@@ -227,7 +227,7 @@ if ( !class_exists( 'UCF_Weather_Config' ) ) {
 			$option_name   = $args['label_for'];
 			$description   = $args['description'];
 			$field_type    = $args['type'];
-			$hidden        = $args['hidden'] ? $args['hidden'] : false;
+			$hidden        = isset( $args['hidden'] ) ? $args['hidden'] : false;
 			$current_value = self::get_option_or_default( $option_name );
 			$markup        = '';
 
