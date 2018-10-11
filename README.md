@@ -22,6 +22,10 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 ## Changelog ##
 
+### 1.0.3 ###
+Bugfixes:
+* Fixed undefined index notices on the plugin's options page
+
 ### 1.0.2 ###
 Enhancements:
 * Updated `UCF_Weather_Common::get_weather_icon()` to be a public method, allowing weather icon classes to be fetched within custom layouts and elsewhere.
