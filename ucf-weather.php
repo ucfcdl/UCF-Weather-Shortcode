@@ -2,7 +2,7 @@
 /*
 Plugin Name: UCF Weather Shortcode
 Description: Provides a shortcode for displaying the current weather using the UCF Weather service.
-Version: 1.0.3
+Version: 1.1.0
 Author: UCF Web Communications
 License: GPL3
 */
