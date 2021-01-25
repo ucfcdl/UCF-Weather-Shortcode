@@ -1,4 +1,29 @@
+//
+// Core styles + theme overrides
+//
 .weather {
+  .wi {
+    display: inline-block;
+    font-size: 2em;
+    line-height: 1;
+    vertical-align: middle;
+
+    svg {
+      fill: currentColor;
+      height: 1em;
+    }
+  }
+
+  .vertical-rule {
+    border-left: 1px solid currentColor;
+    display: inline-block;
+    height: 1em;
+    margin-left: .125em;
+    margin-right: calc(.125em + 1px);
+    vertical-align: middle;
+    width: 1px;
+  }
+
   &.theme-default {
     color: $primary-color;
 
@@ -16,8 +41,35 @@
   }
 }
 
-.forecast-day {
+
+//
+// "Today" feed
+//
+.today-forecast-item {
+  .temp {
+    display: inline-block;
+  }
+
+  .forecast-context {
+    @include sr-only;
+  }
+}
+
+
+//
+// "Extended" feed
+//
+.extended-forecast-item {
   display: inline-block;
-  padding: 4px 8px;
-  margin-right: 4px;
+  padding: .25em .75em;
+
+  .forecast-day-condition {
+    align-items: center;
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .wi {
+    margin-right: .125em;
+  }
 }
