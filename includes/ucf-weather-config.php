@@ -321,7 +321,10 @@ if ( !class_exists( 'UCF_Weather_Config' ) ) {
 		 **/
 		public static function enqueue_frontend_assets() {
 			if ( self::get_option_or_default( 'include_css' ) ) {
-				wp_enqueue_style( 'ucf-weather-css', UCF_WEATHER__STYLES_URL . '/ucf-weather.min.css' );
+				$plugin_data = get_plugin_data( UCF_WEATHER__PLUGIN_FILE, false, false );
+				$version     = $plugin_data['Version'];
+
+				wp_enqueue_style( 'ucf-weather-css', UCF_WEATHER__STYLES_URL . '/ucf-weather.min.css', null, $version );
 			}
 		}
 
