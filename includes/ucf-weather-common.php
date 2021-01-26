@@ -51,22 +51,24 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		 **/
 		public static function display_today_default( $data, $theme ) {
 			$date = new DateTime( $data->date );
-			$today_icon = self::get_weather_icon( $data->today->condition );
-			$tonight_icon = self::get_weather_icon( $data->tonight->condition, true );
+			$today_icon = self::get_weather_icon_svg( $data->today->condition );
+			$tonight_icon = self::get_weather_icon_svg( $data->tonight->condition, true );
 			ob_start();
 		?>
 			<div class="weather today-forecast theme-<?php echo $theme; ?>">
 				<time datetime="<?php echo $date->format( 'Y-m-d' ); ?>">
 					<?php echo $date->format( 'D, M j' ); ?>
 				</time>
-				<div class="today">
-					<span class="<?php echo $today_icon; ?>"></span>
-					<span class="vertical-rule"></span>
+				<div class="today-forecast-item today">
+					<span class="forecast-context">Today</span>
+					<span class="wi"><?php echo $today_icon; ?></span>
+					<span class="vertical-rule" aria-hidden="true"></span>
 					<span class="temp"><?php echo $data->today->temp; ?>F</span>
 				</div>
-				<div class="tonight">
-					<span class="<?php echo $tonight_icon; ?>"></span>
-					<span class="vertical-rule"></span>
+				<div class="today-forecast-item tonight">
+					<span class="forecast-context">Tonight</span>
+					<span class="wi"><?php echo $tonight_icon; ?></span>
+					<span class="vertical-rule" aria-hidden="true"></span>
 					<span class="temp"><?php echo $data->tonight->temp; ?>F</span>
 				</div>
 			</div>
@@ -88,21 +90,22 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		<?php
 			foreach( $data->days as $day ) :
 			$date = new DateTime( $day->date );
-			$icon = self::get_weather_icon( $day->condition );
+			$icon = self::get_weather_icon_svg( $day->condition );
 		?>
-			<div class="forecast-day">
-				<span class="<?php echo $icon; ?>"></span>
-				<time datetime="<?php echo $date->format( 'Y-m-d' ); ?>">
-					<?php echo $date->format( 'D, M j' ); ?>
-				</time>
-				<div class="today">
-					<span class="vertical-rule"></span>
-					<div class="temp">
-						<label>Hi:</label>
+			<div class="extended-forecast-item">
+				<div class="forecast-day-condition">
+					<time datetime="<?php echo $date->format( 'Y-m-d' ); ?>">
+						<?php echo $date->format( 'D, M j' ); ?>
+					</time>
+					<span class="wi"><?php echo $icon; ?></span>
+				</div>
+				<div class="forecast-day-temps">
+					<div class="temp-wrap">
+						<span class="temp-label">Hi:</span>
 						<span class="temp"><?php echo $day->tempMax; ?>F</span>
 					</div>
-					<div class="temp">
-						<label>Lo:</label>
+					<div class="temp-wrap">
+						<span class="temp-label">Lo:</span>
 						<span class="temp"><?php echo $day->tempMin; ?>F</span>
 					</div>
 				</div>
@@ -124,10 +127,10 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		 **/
 		public static function display_default( $data, $theme ) {
 			ob_start();
-			$icon = self::get_weather_icon( $data->condition );
+			$icon = self::get_weather_icon_svg( $data->condition );
 		?>
-			<span class="weather theme-<?php echo $theme; ?>">
-				<span class="<?php echo $icon; ?>"></span>
+			<span class="weather default-forecast theme-<?php echo $theme; ?>">
+				<span class="wi"><?php echo $icon; ?></span>
 				<span class="weather-location">Orlando, FL</span>
 				<span class="vertical-rule"></span>
 				<span class="temp"><?php echo $data->temp; ?>F</span>
@@ -138,15 +141,16 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 
 		/**
 		 * Translates the weather conditions from our feed
-		 * to a weather icon.
+		 * to a weather icon name.
 		 * @author Jim Barnes
 		 * @since 1.0.0
-		 * @param $condition string | The weather condition
-		 * @return string | The css icon classes.
+		 * @param string $condition The weather condition
+		 * @param bool $night Whether the weather condition is a nighttime condition
+		 * @return string | The css icon name
 		 **/
 		public static function get_weather_icon( $condition, $night=false ) {
 			$icon_suffix = null;
-			$icon_prefix = "wi wi-";
+			$icon_prefix = 'wi-';
 			$icons_to_conditions = array(
 				'day-sunny' => array(
 					'fair',
@@ -224,6 +228,40 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 			}
 
 			return $icon_prefix . $icon_suffix;
+		}
+
+		/**
+		 * Fetches markup for a weather icon SVG.
+		 *
+		 * @since 1.1.0
+		 * @author Jo Dickson
+		 * @param string $condition Weather condition name
+		 * @param bool $night Whether the weather condition is a nighttime condition
+		 * @return string SVG icon contents
+		 */
+		public static function get_weather_icon_svg( $condition, $night=false ) {
+			$retval = '';
+			$icon_name = self::get_weather_icon( $condition, $night );
+			$icon_title = esc_attr( $condition );
+
+			// Make sure the icon name is sane before doing anything else
+			$icon_name = sanitize_title( $icon_name );
+			if ( ! $icon_name ) return $retval;
+
+			$filename = UCF_WEATHER__IMAGES_DIR . 'weather-icons/' . $icon_name . '.svg';
+			if ( file_exists( $filename ) ) {
+				$file_contents = file_get_contents( $filename );
+				if ( $file_contents ) {
+					// For the sake of simplicity, just use basic
+					// string replaces here.  DOMDocument parsing would
+					// be more accurate, but is probably overkill here.
+					$file_contents = str_replace( '<?xml version="1.0" encoding="utf-8"?>', '', $file_contents );
+					$file_contents = str_replace( '<svg ', '<svg role="img" aria-label="' . $icon_title . '" ', $file_contents );
+					$retval = $file_contents;
+				}
+			}
+
+			return $retval;
 		}
 	}
 }

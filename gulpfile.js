@@ -1,19 +1,21 @@
-var gulp         = require('gulp'),
-    bower        = require('gulp-bower'),
-    scsslint     = require('gulp-scss-lint'),
-    sass         = require('gulp-sass'),
-    cleanCss     = require('gulp-clean-css'),
-    autoprefixer = require('gulp-autoprefixer'),
-    rename       = require('gulp-rename'),
-    eslint       = require('gulp-eslint'),
-    concat       = require('gulp-concat'),
-    ifFixed      = require('gulp-eslint-if-fixed'),
-    sourcemaps   = require('gulp-sourcemaps'),
-    uglify       = require('gulp-uglify'),
-    readme       = require('gulp-readme-to-markdown'),
-    runSequence  = require('run-sequence');
+const fs           = require('fs');
+const browserSync  = require('browser-sync').create();
+const gulp         = require('gulp');
+const autoprefixer = require('gulp-autoprefixer');
+const cleanCSS     = require('gulp-clean-css');
+const include      = require('gulp-include');
+const eslint       = require('gulp-eslint');
+const isFixed      = require('gulp-eslint-if-fixed');
+const babel        = require('gulp-babel');
+const rename       = require('gulp-rename');
+const sass         = require('gulp-sass');
+const sassLint     = require('gulp-sass-lint');
+const uglify       = require('gulp-uglify');
+const readme       = require('gulp-readme-to-markdown');
+const merge        = require('merge');
 
-var config = {
+
+let config = {
   src: {
     scssPath: './src/scss',
     jsPath: './src/js'
@@ -21,83 +23,206 @@ var config = {
   dist: {
     cssPath: './static/css',
     jsPath: './static/js',
-    fontPath: './static/fonts'
+    imgPath: './static/img'
   },
-  pkgs: {
-    npmPath: './node_modules',
-    bowerPath: './src/components',
-    weatherIcons: './src/components/weather-icons'
-  }
+  packagesPath: './node_modules',
+  sync: false,
+  syncTarget: 'http://localhost/wordpress/'
 };
 
-gulp.task('bower', function() {
-  bower()
-    .pipe(gulp.dest(config.pkgs.bowerPath));
-});
+/* eslint-disable no-sync */
+if (fs.existsSync('./gulp-config.json')) {
+  const overrides = JSON.parse(fs.readFileSync('./gulp-config.json'));
+  config = merge(config, overrides);
+}
+/* eslint-enable no-sync */
 
-gulp.task('move-components-fonts', function() {
-  return gulp.src(config.pkgs.weatherIcons + '/font/**/*')
-    .pipe(gulp.dest(config.dist.fontPath));
-});
 
-gulp.task('components', ['move-components-fonts']);
+//
+// Helper functions
+//
 
-gulp.task('scss-lint', function() {
-  return gulp.src(config.src.scssPath + '/**/*.scss')
-    .pipe(scsslint({
-      'maxBuffer': 400 * 1024
-    }));
-});
+// Base SCSS linting function
+function lintSCSS(src) {
+  return gulp.src(src)
+    .pipe(sassLint())
+    .pipe(sassLint.format())
+    .pipe(sassLint.failOnError());
+}
 
-gulp.task('scss', function() {
-  return gulp.src(config.src.scssPath + '/ucf-weather.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(cleanCss())
+// Base SCSS compile function
+function buildCSS(src, dest) {
+  dest = dest || config.dist.cssPath;
+
+  return gulp.src(src)
+    .pipe(sass({
+      includePaths: [config.src.scssPath, config.packagesPath]
+    })
+      .on('error', sass.logError))
+    .pipe(cleanCSS())
     .pipe(autoprefixer({
-      // Supported browsers in package.json
+      // Supported browsers added in package.json ("browserslist")
       cascade: false
     }))
-    .pipe(rename('ucf-weather.min.css'))
-    .pipe(gulp.dest(config.dist.cssPath));
-});
+    .pipe(rename({
+      extname: '.min.css'
+    }))
+    .pipe(gulp.dest(dest));
+}
 
-gulp.task('css', function() {
-  runSequence('scss-lint', 'scss');
-});
+// Base JS linting function (with eslint). Fixes problems in-place.
+function lintJS(src, dest) {
+  dest = dest || config.src.jsPath;
 
-gulp.task('eslint', function() {
-  return gulp.src(config.src.jsPath + '/**/*.js')
-    .pipe(eslint({fix: true}))
+  return gulp.src(src)
+    .pipe(eslint({
+      fix: true
+    }))
     .pipe(eslint.format())
-    .pipe(ifFixed(config.src.jsPath));
-});
+    .pipe(isFixed(dest));
+}
 
-gulp.task('js-admin', function() {
-  return gulp.src(config.src.jsPath + '/admin.js')
-    .pipe(sourcemaps.init())
-    .pipe(rename('ucf-weather-admin.min.js'))
+// Base JS compile function
+function buildJS(src, dest) {
+  dest = dest || config.dist.jsPath;
+
+  return gulp.src(src)
+    .pipe(include({
+      includePaths: [config.packagesPath, config.src.jsPath]
+    }))
+    .on('error', console.log) // eslint-disable-line no-console
+    .pipe(babel())
     .pipe(uglify())
-    .pipe(gulp.dest(config.dist.jsPath));
+    .pipe(rename({
+      extname: '.min.js'
+    }))
+    .pipe(gulp.dest(dest));
+}
+
+// BrowserSync reload function
+function serverReload(done) {
+  if (config.sync) {
+    browserSync.reload();
+  }
+  done();
+}
+
+// BrowserSync serve function
+function serverServe(done) {
+  if (config.sync) {
+    browserSync.init({
+      proxy: {
+        target: config.syncTarget
+      }
+    });
+  }
+  done();
+}
+
+
+//
+// Components
+//
+
+// Copy weather icon files into static img dir
+gulp.task('move-components-weather-icons', () => {
+  const icons = [
+    'day-sunny',
+    'hot',
+    'cloudy',
+    'snowflake-cold',
+    'showers',
+    'cloudy-gusts',
+    'fog',
+    'storm-showers',
+    'lightning',
+    'night-clear',
+    'night-cloudy',
+    'night-snow',
+    'night-showers',
+    'night-cloudy-gusts',
+    'night-fog',
+    'night-storm-showers',
+    'night-lightning'
+  ];
+
+  let iconPaths = [];
+  icons.forEach(function(icon) {
+    iconPaths.push(`${config.packagesPath}/weather-icons/svg/wi-${icon}.svg`);
+  });
+
+  return gulp.src(iconPaths)
+    .pipe(gulp.dest(`${config.dist.imgPath}/weather-icons`));
 });
 
-gulp.task('js', function() {
-  runSequence('eslint', 'js-admin');
+// All plugin component-related tasks
+gulp.task('components', gulp.series('move-components-weather-icons'));
+
+
+//
+// CSS
+//
+
+// Lint all plugin scss files
+gulp.task('scss-lint-plugin', () => {
+  return lintSCSS(`${config.src.scssPath}/*.scss`);
 });
 
-gulp.task('readme', function() {
-  return gulp.src('./readme.txt')
+// Compile plugin stylesheet
+gulp.task('scss-build-plugin', () => {
+  return buildCSS(`${config.src.scssPath}/ucf-weather.scss`);
+});
+
+// All plugin css-related tasks
+gulp.task('css', gulp.series('scss-lint-plugin', 'scss-build-plugin'));
+
+
+//
+// JavaScript
+//
+
+// Run eslint on js files in src.jsPath
+gulp.task('es-lint-plugin', () => {
+  return lintJS([`${config.src.jsPath}/*.js`], config.src.jsPath);
+});
+
+// Concat and uglify js files through babel
+gulp.task('js-build-admin', () => {
+  return buildJS(`${config.src.jsPath}/admin.js`, config.dist.jsPath);
+});
+
+// All js-related tasks
+gulp.task('js', gulp.series('es-lint-plugin', 'js-build-admin'));
+
+
+//
+// Documentation
+//
+
+// Generates a README.md from README.txt
+gulp.task('readme', () => {
+  return gulp.src('readme.txt')
     .pipe(readme({
       details: false,
-      screenshot_ext: []
+      screenshot_ext: [] // eslint-disable-line camelcase
     }))
     .pipe(gulp.dest('.'));
 });
 
-gulp.task('watch', function() {
-  gulp.watch(config.src.scssPath + '/**/*.scss', ['css']);
-  gulp.watch(config.src.jsPath + '/**/*.js', ['js']);
+
+//
+// Rerun tasks when files change
+//
+gulp.task('watch', (done) => {
+  serverServe(done);
+
+  gulp.watch(`${config.src.scssPath}/**/*.scss`, gulp.series('css', serverReload));
+  gulp.watch(`${config.src.jsPath}/**/*.js`, gulp.series('js', serverReload));
+  gulp.watch('./**/*.php', gulp.series(serverReload));
 });
 
-gulp.task('default', function() {
-  runSequence('components', 'css', 'js', 'readme');
-});
+
+//
+// Default task
+//
+gulp.task('default', gulp.series('components', 'css', 'js', 'readme'));

@@ -2,7 +2,7 @@
 /*
 Plugin Name: UCF Weather Shortcode
 Description: Provides a shortcode for displaying the current weather using the UCF Weather service.
-Version: 1.0.3
+Version: 1.1.0
 Author: UCF Web Communications
 License: GPL3
 */
@@ -15,14 +15,16 @@ define( 'UCF_WEATHER__PLUGIN_FILE', __FILE__ );
 define( 'UCF_WEATHER__PLUGIN_URL', plugins_url( basename( dirname( __FILE__ ) ) ) );
 define( 'UCF_WEATHER__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'UCF_WEATHER__STATIC_URL', UCF_WEATHER__PLUGIN_URL . '/static' );
+define( 'UCF_WEATHER__STATIC_DIR', UCF_WEATHER__PLUGIN_DIR . 'static/' );
 define( 'UCF_WEATHER__STYLES_URL', UCF_WEATHER__STATIC_URL . '/css' );
 define( 'UCF_WEATHER__SCRIPT_URL', UCF_WEATHER__STATIC_URL . '/js' );
+define( 'UCF_WEATHER__IMAGES_DIR', UCF_WEATHER__STATIC_DIR . 'img/' );
 
-include_once 'includes/ucf-weather-config.php';
-include_once 'includes/ucf-weather-feed.php';
-include_once 'includes/ucf-weather-shortcode.php';
-include_once 'includes/ucf-weather-common.php';
-include_once 'admin/ucf-weather-admin.php';
+include_once UCF_WEATHER__PLUGIN_DIR . 'includes/ucf-weather-config.php';
+include_once UCF_WEATHER__PLUGIN_DIR . 'includes/ucf-weather-feed.php';
+include_once UCF_WEATHER__PLUGIN_DIR . 'includes/ucf-weather-shortcode.php';
+include_once UCF_WEATHER__PLUGIN_DIR . 'includes/ucf-weather-common.php';
+include_once UCF_WEATHER__PLUGIN_DIR . 'admin/ucf-weather-admin.php';
 
 if ( ! function_exists( 'ucf_weather_activate' ) ) {
 	function ucf_weather_activate() {
