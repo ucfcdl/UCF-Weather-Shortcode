@@ -50,6 +50,8 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		 * @return string | The html formatted data.
 		 **/
 		public static function display_today_default( $data, $theme ) {
+			if ( ! $data ) return '';
+
 			$date = new DateTime( $data->date );
 			$today_icon = self::get_weather_icon_svg( $data->today->condition );
 			$tonight_icon = self::get_weather_icon_svg( $data->tonight->condition, true );
@@ -84,6 +86,8 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		 * @return string | The html formatted data.
 		 **/
 		public static function display_extended_default( $data, $theme ) {
+			if ( ! $data ) return '';
+
 			ob_start();
 		?>
 			<div class="weather extended-forecast theme-<?php echo $theme; ?>">
@@ -126,6 +130,8 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 		 * @return string | The html formatted data.
 		 **/
 		public static function display_default( $data, $theme ) {
+			if ( ! $data ) return '';
+
 			ob_start();
 			$icon = self::get_weather_icon_svg( $data->condition );
 		?>
