@@ -22,6 +22,17 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 ## Changelog ##
 
+### 1.1.0 ###
+Enhancements:
+* Replaced the weather font icon library with inline SVG inclusion
+* Added missing cache-busting for enqueued assets
+* Modified existing markup and styles as necessary for accessibility and clarity, and to clean up some existing styles
+* Updated default weather service URL
+* Upgraded packages to latest versions; implemented linter configs and issue/PR templates; removed Bower
+
+Bug Fixes:
+* Made sure weather feed `$data` isn't false-y before attempting to access its properties in weather display functions
+
 ### 1.0.3 ###
 Bugfixes:
 * Fixed undefined index notices on the plugin's options page

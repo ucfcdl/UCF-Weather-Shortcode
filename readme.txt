@@ -3,7 +3,7 @@ Contributors: ucfwebcom
 Tags: ucf, weather, shortcode
 Requires at least: 4.5.3
 Tested up to: 4.7.3
-Stable tag: 1.0.3
+Stable tag: 1.1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/copyleft/gpl-3.0.html
 
@@ -28,6 +28,17 @@ Provides a shortcode for displaying weather from the UCF weather service.
 
 
 == Changelog ==
+
+= 1.1.0 =
+Enhancements:
+* Replaced the weather font icon library with inline SVG inclusion
+* Added missing cache-busting for enqueued assets
+* Modified existing markup and styles as necessary for accessibility and clarity, and to clean up some existing styles
+* Updated default weather service URL
+* Upgraded packages to latest versions; implemented linter configs and issue/PR templates; removed Bower
+
+Bug Fixes:
+* Made sure weather feed `$data` isn't false-y before attempting to access its properties in weather display functions
 
 = 1.0.3 =
 Bugfixes:
