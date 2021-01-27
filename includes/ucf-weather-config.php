@@ -9,7 +9,7 @@ if ( !class_exists( 'UCF_Weather_Config' ) ) {
 		public static
 			$option_prefix = 'ucf_weather_',
 			$option_defaults = array(
-				'feed_url_base'        => 'https://weather.smca.ucf.edu',
+				'feed_url_base'        => 'https://weather.cm.ucf.edu',
 				'include_css'          => true,
 				'use_transient'        => true,
 				'transient_expiration' => 300
@@ -175,7 +175,7 @@ if ( !class_exists( 'UCF_Weather_Config' ) ) {
 				'ucf_weather_section_general',  // option section slug
 				array(  // extra arguments to pass to the callback function
 					'label_for'   => self::$option_prefix . 'feed_url_base',
-					'description' => 'The default base URL to use for weather feeds from weather.smca.ucf.edu.',
+					'description' => 'The default base URL to use for weather feeds from weather.cm.ucf.edu.',
 					'type'        => 'text'
 				)
 			);
