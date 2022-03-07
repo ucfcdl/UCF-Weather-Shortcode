@@ -1,8 +1,8 @@
 const settingsLogic = function () {
   const $transientExp = jQuery('#ucf_weather_transient_expiration'),
     $useTransient = jQuery('#ucf_weather_use_transient'),
-    checked = $useTransient.prop('checked'),
-    $wrapperTransientExp = $transientExp.parents('tr');
+    $wrapperTransientExp = $transientExp.parents('tr'),
+    checked = $useTransient.prop('checked');
 
   // If use transient is true
   if (checked) {
@@ -11,7 +11,7 @@ const settingsLogic = function () {
     $wrapperTransientExp.hide();
   }
 
-  $useTransient.on('change', (e) => {
+  $useTransient.on('change', () => {
     $wrapperTransientExp.toggle();
   });
 };
