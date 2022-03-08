@@ -55,7 +55,8 @@ n/a
 
 ## Installation Requirements ##
 
-None
+* node v16+
+* gulp-cli
 
 
 ## Development & Contributing ##
