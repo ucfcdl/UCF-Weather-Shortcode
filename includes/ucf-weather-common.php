@@ -263,6 +263,11 @@ if ( ! class_exists( 'UCF_Weather_Common' ) ) {
 					// be more accurate, but is probably overkill here.
 					$file_contents = str_replace( '<?xml version="1.0" encoding="utf-8"?>', '', $file_contents );
 					$file_contents = str_replace( '<svg ', '<svg role="img" aria-label="' . $icon_title . '" ', $file_contents );
+
+					// Each svg has the same id, 'Layer_1'.
+					// Go ahead and remove that here so that we don't
+					// end up displaying duplicate ids on a page.
+					$file_contents = str_replace( 'id="Layer_1"', '', $file_contents );
 					$retval = $file_contents;
 				}
 			}
