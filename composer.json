@@ -1,0 +1,7 @@
+{
+    "name": "ucf/ucf-weather-shortcode",
+    "type": "wordpress-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
